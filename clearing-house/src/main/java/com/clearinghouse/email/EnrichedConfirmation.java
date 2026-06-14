@@ -1,14 +1,15 @@
-package com.clearinghouse.domain;
+package com.clearinghouse.email;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record NovatedTrade(
+public record EnrichedConfirmation(
     String tradeId,
     String counterparty,
     String clearingHouseId,
     BigDecimal amount,
     String currency,
     LocalDate settlementDate,
-    String originalTradeId
+    String currencyName,
+    String settlementLocation
 ) {}

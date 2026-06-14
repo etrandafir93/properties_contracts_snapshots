@@ -1,4 +1,4 @@
-package com.clearinghouse.domain;
+package com.clearinghouse.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

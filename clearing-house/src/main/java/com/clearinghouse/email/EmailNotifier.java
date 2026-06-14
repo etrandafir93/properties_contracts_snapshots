@@ -1,6 +1,6 @@
-package com.clearinghouse.filters;
+package com.clearinghouse.email;
 
-import com.clearinghouse.domain.EnrichedConfirmation;
+import com.clearinghouse.email.EnrichedConfirmation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
@@ -10,15 +10,15 @@ import java.util.List;
 import java.util.function.Consumer;
 
 @Component
-public class TradeConfirmationPublisher {
+public class EmailNotifier {
 
-    private static final Logger logger = LoggerFactory.getLogger(TradeConfirmationPublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(EmailNotifier.class);
 
     @Bean
-    public Consumer<List<EnrichedConfirmation>> publish() {
+    public Consumer<List<EnrichedConfirmation>> email() {
         return confirmations -> {
             confirmations.forEach(confirmation -> {
-                logger.info("Publishing confirmation for trade: {} to counterparty: {}",
+                logger.info("Sending confirmation email for trade: {} to counterparty: {}",
                     confirmation.tradeId(), confirmation.counterparty());
             });
         };

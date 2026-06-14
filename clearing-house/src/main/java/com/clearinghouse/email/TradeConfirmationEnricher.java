@@ -1,7 +1,7 @@
-package com.clearinghouse.filters;
+package com.clearinghouse.email;
 
-import com.clearinghouse.domain.EnrichedConfirmation;
-import com.clearinghouse.domain.NovatedTrade;
+import com.clearinghouse.email.EnrichedConfirmation;
+import com.clearinghouse.novation.NovatedTrade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 

@@ -1,4 +1,4 @@
-package com.clearinghouse.domain;
+package com.clearinghouse.novation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

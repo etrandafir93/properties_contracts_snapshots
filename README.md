@@ -18,7 +18,7 @@ You'll leave with a different way of thinking about testing — patterns that sc
 AI generates code at a pace our test suites weren't designed for. We ship faster, but we accumulate cognitive debt — we stop understanding our own systems. When AI writes the tests too, we end up with green, verbose, shallow suites that prove nothing. This talk introduces three trust exercises for your codebase: property-based testing to reason in invariants instead of examples, contract testing to keep AI-generated integrations from breaking clients, and snapshot testing to make every output change visible and reviewable. You'll leave testing smarter, not more.
 
 ---
-
+    
 ## Title Options
 
 | Context | Title | Subtitle |

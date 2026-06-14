@@ -1,5 +1,6 @@
-package com.clearinghouse.domain;
+package com.clearinghouse.persistence;
 
+import com.clearinghouse.novation.NovatedTrade;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;

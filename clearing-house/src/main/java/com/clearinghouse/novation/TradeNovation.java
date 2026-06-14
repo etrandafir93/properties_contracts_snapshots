@@ -1,7 +1,7 @@
-package com.clearinghouse.filters;
+package com.clearinghouse.novation;
 
-import com.clearinghouse.domain.NovatedTrade;
-import com.clearinghouse.domain.ValidatedTrade;
+import com.clearinghouse.novation.NovatedTrade;
+import com.clearinghouse.novation.ValidatedTrade;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 

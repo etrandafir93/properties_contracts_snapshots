@@ -20,28 +20,15 @@ spring:
   cloud:
     stream:
       function:
-        # Composed pipeline: incoming -> (validate|novate) -> persist -> (enrich|publish)
-        definition: riskAndNovate;persist;enrichAndPublish
+        # Single composed pipeline: one continuous flow
+        # IncomingTrade -> validate -> novate -> persist -> enrich -> email
+        definition: validate|novate|persist|enrich|email
+
       bindings:
-        # Input: receives IncomingTrade from topic
-        riskAndNovate-in-0:
+        # Only input binding needed - entire pipeline is composed
+        validate-in-0:
           destination: incoming-trades
-          group: risk-validators
-        # Output of riskAndNovate: List<NovatedTrade> -> to persist
-        riskAndNovate-out-0:
-          destination: novated-trades
-        # Input to persist: List<NovatedTrade>
-        persist-in-0:
-          destination: novated-trades
-          group: persisters
-        # Output of persist: List<NovatedTrade> -> to enrichAndPublish
-        persist-out-0:
-          destination: enrichment-trades
-        # Input to enrichAndPublish: List<NovatedTrade>
-        enrichAndPublish-in-0:
-          destination: enrichment-trades
-          group: enrichers
-        # enrichAndPublish returns Void (terminal operation)
+          group: clearing-house
       kafka:
         binder:
           brokers: localhost:29092

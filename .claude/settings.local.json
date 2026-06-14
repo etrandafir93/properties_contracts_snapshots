@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(sed -i 's/package com.clearinghouse.filters;/package com.clearinghouse.novation;/g' clearing-house/src/main/java/com/clearinghouse/novation/RiskValidator.java clearing-house/src/main/java/com/clearinghouse/novation/TradeNovation.java)",
+      "Bash(sed -i 's/package com.clearinghouse.domain;/package com.clearinghouse.novation;/g' clearing-house/src/main/java/com/clearinghouse/novation/IncomingTrade.java clearing-house/src/main/java/com/clearinghouse/novation/ValidatedTrade.java clearing-house/src/main/java/com/clearinghouse/novation/NovatedTrade.java)",
+      "Bash(sed -i 's/package com.clearinghouse.domain;/package com.clearinghouse.persistence;/g' clearing-house/src/main/java/com/clearinghouse/persistence/TradeEntity.java clearing-house/src/main/java/com/clearinghouse/persistence/TradeRepository.java)",
+      "Bash(sed -i s/com.clearinghouse.domain.NovatedTrade/com.clearinghouse.novation.NovatedTrade/g clearing-house/src/main/java/com/clearinghouse/persistence/TradeEntity.java)",
+      "Bash(sed -i 's/package com.clearinghouse.filters;/package com.clearinghouse.email;/g' clearing-house/src/main/java/com/clearinghouse/email/TradeConfirmationEnricher.java clearing-house/src/main/java/com/clearinghouse/email/EmailNotifier.java)"
+    ]
+  }
+}
