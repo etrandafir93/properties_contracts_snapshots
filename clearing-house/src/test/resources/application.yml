@@ -1,7 +1,4 @@
 spring:
-  application:
-    name: clearing-house-service
-
   cloud:
     stream:
       function:
@@ -15,10 +12,3 @@ spring:
           content-type: application/json
         email-out-0:
           destination: email-notifications
-
-logging:
-  level:
-    com.clearinghouse: DEBUG
-
-server:
-  port: 8080

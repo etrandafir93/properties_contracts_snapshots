@@ -2,43 +2,64 @@
   {
     "code": "USD",
     "name": "US Dollar",
+    "symbol": "$",
     "settlementLocation": "New York",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 840,
+    "introducedOn": "1792-04-02"
   },
   {
     "code": "EUR",
     "name": "Euro",
+    "symbol": "€",
     "settlementLocation": "Frankfurt",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 978,
+    "introducedOn": "1999-01-01"
   },
   {
     "code": "GBP",
     "name": "British Pound",
+    "symbol": "£",
     "settlementLocation": "London",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 826,
+    "introducedOn": "1971-02-15"
   },
   {
     "code": "JPY",
     "name": "Japanese Yen",
+    "symbol": "¥",
     "settlementLocation": "Tokyo",
-    "decimalPlaces": 0
+    "decimalPlaces": 0,
+    "isoNumericCode": 392,
+    "introducedOn": "1871-06-27"
   },
   {
     "code": "CHF",
     "name": "Swiss Franc",
+    "symbol": "Fr",
     "settlementLocation": "Zurich",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 756,
+    "introducedOn": "1850-05-07"
   },
   {
     "code": "CAD",
     "name": "Canadian Dollar",
+    "symbol": "$",
     "settlementLocation": "Toronto",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 124,
+    "introducedOn": "1858-01-01"
   },
   {
     "code": "AUD",
     "name": "Australian Dollar",
+    "symbol": "$",
     "settlementLocation": "Sydney",
-    "decimalPlaces": 2
+    "decimalPlaces": 2,
+    "isoNumericCode": 36,
+    "introducedOn": "1966-02-14"
   }
 ]

@@ -1,40 +1,37 @@
 package com.clearinghouse.novation;
 
 import com.clearinghouse.Filter;
+import com.clearinghouse.LogUtils;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 @Filter("novate")
-public class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
+@Slf4j
+class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
 
     @Override
-    public List<NovatedTrade> apply(ValidatedTrade validatedTrade) {
-        String clearingHouseId = "CH-001";
-        String leg1Id = UUID.randomUUID().toString();
-        String leg2Id = UUID.randomUUID().toString();
-
-        NovatedTrade leg1 = new NovatedTrade(
-            leg1Id,
-            validatedTrade.counterpartyA(),
-            clearingHouseId,
-            validatedTrade.amount(),
-            validatedTrade.currency(),
-            validatedTrade.settlementDate(),
-            validatedTrade.tradeId()
+    public List<NovatedTrade> apply(ValidatedTrade trade) {
+        log.info("{}[novate] Novating trade: {}{}", LogUtils.GREEN, trade.tradeId(), LogUtils.RESET);
+        List<NovatedTrade> legs = List.of(
+            leg(trade.counterpartyA(), trade),
+            leg(trade.counterpartyB(), trade)
         );
+        log.info("{}[novate] Trade novated into {} legs: {}{}", LogUtils.GREEN, legs.size(), trade.tradeId(), LogUtils.RESET);
+        return legs;
+    }
 
-        NovatedTrade leg2 = new NovatedTrade(
-            leg2Id,
-            validatedTrade.counterpartyB(),
-            clearingHouseId,
-            validatedTrade.amount(),
-            validatedTrade.currency(),
-            validatedTrade.settlementDate(),
-            validatedTrade.tradeId()
+    private NovatedTrade leg(String counterparty, ValidatedTrade trade) {
+        return new NovatedTrade(
+            UUID.randomUUID().toString(),
+            counterparty,
+            "CH-001",
+            trade.amount(),
+            trade.currency(),
+            trade.settlementDate(),
+            trade.tradeId()
         );
-
-        return List.of(leg1, leg2);
     }
 }
