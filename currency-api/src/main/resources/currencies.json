@@ -1,0 +1,44 @@
+[
+  {
+    "code": "USD",
+    "name": "US Dollar",
+    "settlementLocation": "New York",
+    "decimalPlaces": 2
+  },
+  {
+    "code": "EUR",
+    "name": "Euro",
+    "settlementLocation": "Frankfurt",
+    "decimalPlaces": 2
+  },
+  {
+    "code": "GBP",
+    "name": "British Pound",
+    "settlementLocation": "London",
+    "decimalPlaces": 2
+  },
+  {
+    "code": "JPY",
+    "name": "Japanese Yen",
+    "settlementLocation": "Tokyo",
+    "decimalPlaces": 0
+  },
+  {
+    "code": "CHF",
+    "name": "Swiss Franc",
+    "settlementLocation": "Zurich",
+    "decimalPlaces": 2
+  },
+  {
+    "code": "CAD",
+    "name": "Canadian Dollar",
+    "settlementLocation": "Toronto",
+    "decimalPlaces": 2
+  },
+  {
+    "code": "AUD",
+    "name": "Australian Dollar",
+    "settlementLocation": "Sydney",
+    "decimalPlaces": 2
+  }
+]

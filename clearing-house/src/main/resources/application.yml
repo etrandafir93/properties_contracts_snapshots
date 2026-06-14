@@ -1,0 +1,59 @@
+spring:
+  application:
+    name: clearing-house-service
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+
+  h2:
+    console:
+      enabled: true
+
+  cloud:
+    stream:
+      function:
+        definition: validate;novate;persist;enrich;publish
+      bindings:
+        validate-in-0:
+          destination: incoming-trades
+          group: validators
+        validate-out-0:
+          destination: validated-trades
+        novate-in-0:
+          destination: validated-trades
+          group: novators
+        novate-out-0:
+          destination: novated-trades
+        persist-in-0:
+          destination: novated-trades
+          group: persisters
+        persist-out-0:
+          destination: enrichment-trades
+        enrich-in-0:
+          destination: enrichment-trades
+          group: enrichers
+        enrich-out-0:
+          destination: enriched-confirmations
+        publish-in-0:
+          destination: enriched-confirmations
+          group: publishers
+      kafka:
+        binder:
+          brokers: localhost:29092
+          zkNodes: localhost:22181
+
+logging:
+  level:
+    com.clearinghouse: DEBUG
+    org.springframework.cloud.stream: DEBUG
+
+server:
+  port: 8080

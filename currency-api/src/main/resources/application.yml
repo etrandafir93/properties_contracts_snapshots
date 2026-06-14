@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: currency-api-service
+
+logging:
+  level:
+    com.clearinghouse: DEBUG
+
+server:
+  port: 8081
