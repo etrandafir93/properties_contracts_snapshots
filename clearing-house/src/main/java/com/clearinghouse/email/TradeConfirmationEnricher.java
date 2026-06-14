@@ -1,12 +1,12 @@
 package com.clearinghouse.email;
 
+import com.clearinghouse.Filter;
 import com.clearinghouse.novation.NovatedTrade;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 
-@Component("enrich")
+@Filter("enrich")
 public class TradeConfirmationEnricher implements Function<List<NovatedTrade>, List<EnrichedConfirmation>> {
 
     @Override

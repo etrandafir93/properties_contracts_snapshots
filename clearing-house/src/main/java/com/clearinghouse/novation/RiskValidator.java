@@ -1,10 +1,10 @@
 package com.clearinghouse.novation;
 
-import org.springframework.stereotype.Component;
+import com.clearinghouse.Filter;
 
 import java.util.function.Function;
 
-@Component("validate")
+@Filter("validate")
 public class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
 
     @Override

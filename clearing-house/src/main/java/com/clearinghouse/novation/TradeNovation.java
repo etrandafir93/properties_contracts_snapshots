@@ -1,12 +1,12 @@
 package com.clearinghouse.novation;
 
-import org.springframework.stereotype.Component;
+import com.clearinghouse.Filter;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Component("novate")
+@Filter("novate")
 public class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
 
     @Override

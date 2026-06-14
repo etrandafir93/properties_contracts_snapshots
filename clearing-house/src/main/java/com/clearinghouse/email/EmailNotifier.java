@@ -1,13 +1,13 @@
 package com.clearinghouse.email;
 
+import com.clearinghouse.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Consumer;
 
-@Component("email")
+@Filter("email")
 public class EmailNotifier implements Consumer<List<EnrichedConfirmation>> {
 
     private static final Logger logger = LoggerFactory.getLogger(EmailNotifier.class);

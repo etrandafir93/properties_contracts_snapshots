@@ -1,12 +1,12 @@
 package com.clearinghouse.persistence;
 
+import com.clearinghouse.Filter;
 import com.clearinghouse.novation.NovatedTrade;
-import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 
-@Component("persist")
+@Filter("persist")
 public class TradePersister implements Function<List<NovatedTrade>, List<NovatedTrade>> {
 
     private final TradeRepository tradeRepository;
