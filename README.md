@@ -1,0 +1,1 @@
+# properties_contracts_snapshots
