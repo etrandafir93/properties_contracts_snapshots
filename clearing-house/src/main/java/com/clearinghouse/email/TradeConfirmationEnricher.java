@@ -1,19 +1,17 @@
 package com.clearinghouse.email;
 
-import com.clearinghouse.email.EnrichedConfirmation;
 import com.clearinghouse.novation.NovatedTrade;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.function.Function;
 
-@Component
-public class TradeConfirmationEnricher {
+@Component("enrich")
+public class TradeConfirmationEnricher implements Function<List<NovatedTrade>, List<EnrichedConfirmation>> {
 
-    @Bean
-    public Function<List<NovatedTrade>, List<EnrichedConfirmation>> enrich() {
-        return novatedTrades -> novatedTrades.stream()
+    @Override
+    public List<EnrichedConfirmation> apply(List<NovatedTrade> novatedTrades) {
+        return novatedTrades.stream()
             .map(trade -> new EnrichedConfirmation(
                 trade.tradeId(),
                 trade.counterparty(),

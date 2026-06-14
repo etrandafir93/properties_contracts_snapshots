@@ -1,45 +1,40 @@
 package com.clearinghouse.novation;
 
-import com.clearinghouse.novation.NovatedTrade;
-import com.clearinghouse.novation.ValidatedTrade;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-@Component
-public class TradeNovation {
+@Component("novate")
+public class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
 
-    @Bean
-    public Function<ValidatedTrade, List<NovatedTrade>> novate() {
-        return validatedTrade -> {
-            String clearingHouseId = "CH-001";
-            String leg1Id = UUID.randomUUID().toString();
-            String leg2Id = UUID.randomUUID().toString();
+    @Override
+    public List<NovatedTrade> apply(ValidatedTrade validatedTrade) {
+        String clearingHouseId = "CH-001";
+        String leg1Id = UUID.randomUUID().toString();
+        String leg2Id = UUID.randomUUID().toString();
 
-            NovatedTrade leg1 = new NovatedTrade(
-                leg1Id,
-                validatedTrade.counterpartyA(),
-                clearingHouseId,
-                validatedTrade.amount(),
-                validatedTrade.currency(),
-                validatedTrade.settlementDate(),
-                validatedTrade.tradeId()
-            );
+        NovatedTrade leg1 = new NovatedTrade(
+            leg1Id,
+            validatedTrade.counterpartyA(),
+            clearingHouseId,
+            validatedTrade.amount(),
+            validatedTrade.currency(),
+            validatedTrade.settlementDate(),
+            validatedTrade.tradeId()
+        );
 
-            NovatedTrade leg2 = new NovatedTrade(
-                leg2Id,
-                validatedTrade.counterpartyB(),
-                clearingHouseId,
-                validatedTrade.amount(),
-                validatedTrade.currency(),
-                validatedTrade.settlementDate(),
-                validatedTrade.tradeId()
-            );
+        NovatedTrade leg2 = new NovatedTrade(
+            leg2Id,
+            validatedTrade.counterpartyB(),
+            clearingHouseId,
+            validatedTrade.amount(),
+            validatedTrade.currency(),
+            validatedTrade.settlementDate(),
+            validatedTrade.tradeId()
+        );
 
-            return List.of(leg1, leg2);
-        };
+        return List.of(leg1, leg2);
     }
 }

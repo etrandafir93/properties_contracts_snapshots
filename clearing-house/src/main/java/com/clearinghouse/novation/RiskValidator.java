@@ -1,18 +1,15 @@
 package com.clearinghouse.novation;
 
-import com.clearinghouse.novation.IncomingTrade;
-import com.clearinghouse.novation.ValidatedTrade;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.function.Function;
 
-@Component
-public class RiskValidator {
+@Component("validate")
+public class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
 
-    @Bean
-    public Function<IncomingTrade, ValidatedTrade> validate() {
-        return incomingTrade -> new ValidatedTrade(
+    @Override
+    public ValidatedTrade apply(IncomingTrade incomingTrade) {
+        return new ValidatedTrade(
             incomingTrade.tradeId(),
             incomingTrade.counterpartyA(),
             incomingTrade.counterpartyB(),
