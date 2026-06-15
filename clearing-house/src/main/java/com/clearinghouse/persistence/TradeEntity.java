@@ -5,7 +5,10 @@ import com.clearinghouse.novation.NovatedTrade;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-class TradeEntity {
+import lombok.Getter;
+
+@Getter
+public class TradeEntity {
 
     String tradeId;
     String counterparty;

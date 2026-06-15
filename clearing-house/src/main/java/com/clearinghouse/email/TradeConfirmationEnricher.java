@@ -1,7 +1,7 @@
 package com.clearinghouse.email;
 
-import com.clearinghouse.Filter;
-import com.clearinghouse.LogUtils;
+import com.clearinghouse.application.Filter;
+import com.clearinghouse.application.LogUtils;
 import com.clearinghouse.novation.NovatedTrade;
 import lombok.extern.slf4j.Slf4j;
 

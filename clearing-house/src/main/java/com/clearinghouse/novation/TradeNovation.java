@@ -1,7 +1,7 @@
 package com.clearinghouse.novation;
 
-import com.clearinghouse.Filter;
-import com.clearinghouse.LogUtils;
+import com.clearinghouse.application.Filter;
+import com.clearinghouse.application.LogUtils;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;

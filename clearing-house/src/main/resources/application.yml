@@ -3,16 +3,26 @@ spring:
     name: clearing-house-service
 
   cloud:
+    function:
+      definition: validate;novate;persist;enrich;email
     stream:
-      function:
-        definition: validate|novate|persist;enrich|email
       bindings:
         validate-in-0:
           destination: incoming-trades
-          content-type: application/json
-        enrich-in-0:
+        validate-out-0:
+          destination: validated-trades
+        novate-in-0:
+          destination: validated-trades
+        novate-out-0:
           destination: novated-trades
-          content-type: application/json
+        persist-in-0:
+          destination: novated-trades
+        enrich-in-0:
+          destination: persisted-trades
+        enrich-out-0:
+          destination: novated-trade-confirmations
+        email-in-0:
+          destination: novated-trade-confirmations
         email-out-0:
           destination: email-notifications
 
