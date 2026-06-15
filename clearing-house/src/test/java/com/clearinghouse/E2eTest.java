@@ -1,16 +1,15 @@
 package com.clearinghouse;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.BooleanSupplier;
 import java.util.stream.IntStream;
 
-import org.awaitility.Awaitility;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -51,10 +50,7 @@ class E2eTest {
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
-	private List<NovatedTrade> novatedLegs;
-
-	@Test
-	@Order(1)
+	@BeforeAll
 	void trigger() {
 		var trade = new IncomingTrade("trade-123", "Alice", "Bob",
 				BigDecimal.valueOf(1_000), "USD", LocalDate.of(2030, 1, 1));
@@ -63,7 +59,7 @@ class E2eTest {
 	}
 
 	@Test
-	@Order(2)
+	@Order(1)
 	void validate() throws Exception {
 		ValidatedTrade validated = receiveOne(output, "validated-trades",
 				ValidatedTrade.class);
@@ -78,11 +74,11 @@ class E2eTest {
 	}
 
 	@Test
-	@Order(3)
+	@Order(2)
 	void novate() throws Exception {
-		novatedLegs = receiveOne(output, "novated-trades", new TypeReference<>() {});
+		List<NovatedTrade> novatedTrades = receiveOne(output, "novated-trades", new TypeReference<>() {});
 
-		assertThat(novatedLegs)
+		assertThat(novatedTrades)
 				.allSatisfy(leg -> assertThat(leg)
 						.hasFieldOrPropertyWithValue("originalTradeId", "trade-123")
 						.hasFieldOrPropertyWithValue("clearingHouseId", "CH-001")
@@ -93,15 +89,20 @@ class E2eTest {
 	}
 
 	@Test
-	@Order(4)
+	@Order(3)
 	void persist() {
-		await(() -> tradeRepository.findAll().size() == 2);
-		novatedLegs.forEach(
-				leg -> assertThat(tradeRepository.findById(leg.tradeId())).isPresent());
+		await().untilAsserted(() ->
+			assertThat(tradeRepository.findAll())
+				.hasSize(2)
+				.allMatch(it -> it.getOriginalTradeId().equals("trade-123"))
+				.allMatch(it -> it.getAmount().equals(BigDecimal.valueOf(1_000)))
+				.allMatch(it -> it.getCurrency().equals("USD"))
+				.anyMatch(it -> it.getCounterparty().equals("Alice"))
+				.anyMatch(it -> it.getCounterparty().equals("Bob")));
 	}
 
 	@Test
-	@Order(5)
+	@Order(4)
 	void enrich() {
 		List<EnrichedConfirmation> confirmations = receiveMany(2, output,
 				"novated-trade-confirmations", EnrichedConfirmation.class);
@@ -116,7 +117,7 @@ class E2eTest {
 	}
 
 	@Test
-	@Order(6)
+	@Order(5)
 	void email() {
 		List<String> emails = pollForMessages(2, output, "email-notifications");
 
@@ -129,10 +130,6 @@ class E2eTest {
 				it.contains("Counterparty: Bob") &&
 				it.contains("Amount: 1000 USD (US Dollar)") &&
 				it.contains("Settlement Date: 2030-01-01 — New York"));
-	}
-
-	private void await(BooleanSupplier condition) {
-		Awaitility.await().atMost(Duration.ofSeconds(2)).until(condition::getAsBoolean);
 	}
 
 	private <T> T receiveOne(OutputDestination output, String channel, Class<T> type)

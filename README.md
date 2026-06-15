@@ -208,6 +208,110 @@ publisher --> output
 | **TradeConfirmationEnricher** | Loads static data (currencies, settlement info) from cache and enriches confirmations | `NovatedTrade[]` | `EnrichedConfirmation[]` |
 | **TradeConfirmationPublisher** | Publishes HTML email confirmations to Kafka notification channel | `EnrichedConfirmation[]` | Published event |
 
+## Data Flow Diagram
+
+```puml
+@startuml
+!define INPUT_COLOR #FFE0B2
+!define PROCESS_COLOR #BBDEFB
+!define OUTPUT_COLOR #C8E6C9
+
+rectangle "IncomingTrade" as input #FFE0B2
+note right of input
+  tradeId: "trade-123"
+  counterpartyA: "Alice"
+  counterpartyB: "Bob"
+  amount: 1000
+  currency: "USD"
+  settlementDate: 2030-01-01
+end note
+
+rectangle "RiskValidator" as v1 #BBDEFB
+
+rectangle "ValidatedTrade" as v1_out #E1F5FE
+note right of v1_out
+  Same as IncomingTrade
+  with validation passed
+end note
+
+rectangle "TradeNovation" as v2 #BBDEFB
+
+rectangle "NovatedTrade[]\n(2 legs)" as v2_out #E1F5FE
+note right of v2_out
+  Leg 1: Alice → CH
+  Leg 2: CH → Bob
+  clearingHouseId: "CH-001"
+end note
+
+rectangle "NovatedTradeRepository" as v3 #BBDEFB
+
+rectangle "EnrichedConfirmation[]\n(2 confirmations)" as v3_out #E1F5FE
+note right of v3_out
+  + currencyName: "US Dollar"
+  + settlementLocation: "New York"
+end note
+
+rectangle "TradeConfirmationPublisher" as v4 #BBDEFB
+
+rectangle "Email\nNotifications" as output #C8E6C9
+note right of output
+  HTML confirmations
+  to both parties
+end note
+
+input --> v1 : send
+v1 --> v1_out
+v1_out --> v2 : process
+v2 --> v2_out
+v2_out --> v3 : persist
+v3 --> v3_out
+v3_out --> v4 : enrich & publish
+v4 --> output
+
+@enduml
+```
+
+## Test Sequence Diagram
+
+The E2eTest executes as an ordered pipeline with intermediate assertions:
+
+```puml
+@startuml
+participant "Test Harness" as test
+participant "InputDestination" as input
+participant "RiskValidator" as validator
+participant "TradeNovation" as novation
+participant "Repository" as repo
+participant "Enricher" as enricher
+participant "Publisher" as publisher
+participant "OutputDestination" as output
+
+test ->> input: @BeforeAll: send IncomingTrade
+note over input: "incoming-trades" channel
+
+test ->> output: @Order(1) validate(): expect ValidatedTrade
+output ->> test: ValidatedTrade
+note over test: Assert: tradeId, counterparties, amount, currency, settlementDate
+
+test ->> output: @Order(2) novate(): expect NovatedTrade[]
+output ->> test: List<NovatedTrade>
+note over test: Assert: 2 legs with correct counterparties and CH ID
+
+test ->> repo: @Order(3) persist(): query findAll()
+repo ->> test: List with 2 trades
+note over test: Assert: both trades found by ID
+
+test ->> output: @Order(4) enrich(): expect EnrichedConfirmation[]
+output ->> test: List<EnrichedConfirmation>
+note over test: Assert: currency names, settlement locations, CH ID
+
+test ->> output: @Order(5) email(): expect notifications
+output ->> test: List<String> (HTML emails)
+note over test: Assert: both parties have correct confirmations
+
+@enduml
+```
+
 ## Key Design Decisions
 
 - **Pipes and Filters** — Each component transforms data and passes it to the next. Easy to test, compose, and reason about.
