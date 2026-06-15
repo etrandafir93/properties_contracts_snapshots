@@ -1,40 +1,41 @@
-@startuml
+@startuml flow
 !theme plain
-skinparam backgroundColor #fafafa
 
-digraph {
-  rankdir=LR
-  node [shape=box, style=filled, fontname=Arial]
+' Input Channel (message queue)
+queue "incoming-trades" as ch_in #FFE0B2
 
-  # Channels (pipes)
-  in_ch [label="IncomingTrade\nChannel", fillcolor="#FFE0B2", shape=box]
-  ch_1 [label="ValidatedTrade\nChannel", fillcolor="#E1F5FE", shape=box]
-  ch_2 [label="NovatedTrade[]\nChannel", fillcolor="#E1F5FE", shape=box]
-  ch_4 [label="EnrichedConfirmation[]\nChannel", fillcolor="#E1F5FE", shape=box]
-  out_ch [label="EmailNotification\nChannel", fillcolor="#FFE0B2", shape=box]
+' validate Filter
+rectangle "validate" as f1 #BBDEFB
+queue "validated-trades" as ch_1 #E1F5FE
 
-  # Filters
-  f1 [label="RiskValidator\n(Filter)", fillcolor="#BBDEFB", shape=box]
-  f2 [label="TradeNovation\n(Filter)", fillcolor="#BBDEFB", shape=box]
-  f3 [label="TradePersister\n(Filter)", fillcolor="#BBDEFB", shape=box]
-  f4 [label="TradeConfirmationEnricher\n(Filter)", fillcolor="#BBDEFB", shape=box]
-  f5 [label="TradeConfirmationPublisher\n(Filter)", fillcolor="#BBDEFB", shape=box]
+' novate Filter
+rectangle "novate" as f2 #BBDEFB
+queue "novated-trades" as ch_2 #E1F5FE
 
-  # Database
-  db [label="Database", fillcolor="#C8E6C9", shape=cylinder]
+' persist Filter
+rectangle "persist" as f3 #BBDEFB
+database "DB" as db #C8E6C9
+queue "novated-trade-confirmations" as ch_3 #E1F5FE
 
-  # Flow
-  in_ch -> f1 [label="pipe"]
-  f1 -> ch_1 [label="pipe"]
-  ch_1 -> f2 [label="pipe"]
-  f2 -> ch_2 [label="pipe"]
-  ch_2 -> f3 [label="pipe"]
-  f3 -> db [label="persist"]
-  f3 -> ch_2 [label="pass-through"]
-  ch_2 -> f4 [label="pipe"]
-  f4 -> ch_4 [label="pipe"]
-  ch_4 -> f5 [label="pipe"]
-  f5 -> out_ch [label="pipe"]
-}
+' enrich Filter
+rectangle "enrich" as f4 #BBDEFB
+queue "enriched-confirmations" as ch_4 #E1F5FE
+
+' email Filter
+rectangle "email" as f5 #BBDEFB
+queue "email-notifications" as ch_out #FFE0B2
+
+' Flow connections
+ch_in --> f1
+f1 --> ch_1
+ch_1 --> f2
+f2 --> ch_2
+ch_2 --> f3
+f3 --> db
+f3 --> ch_3
+ch_3 --> f4
+f4 --> ch_4
+ch_4 --> f5
+f5 --> ch_out
 
 @enduml
