@@ -13,11 +13,13 @@ import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.binder.test.EnableTestBinder;
 import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
+import org.springframework.context.annotation.Import;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 
@@ -40,6 +42,7 @@ import tools.jackson.databind.ObjectMapper;
 		name = "currency-api",
 		baseUrlProperties = "currency-api.url"
 ))
+@Import(FixedClockConfig.class)
 class E2eTest {
 
 	@Autowired
@@ -65,8 +68,8 @@ class E2eTest {
 
 		assertThat(validated).isNotNull()
 				.hasFieldOrPropertyWithValue("tradeId", "trade-123")
-				.hasFieldOrPropertyWithValue("counterpartyA", "Alice")
-				.hasFieldOrPropertyWithValue("counterpartyB", "Bob")
+				.hasFieldOrPropertyWithValue("party", "Alice")
+				.hasFieldOrPropertyWithValue("counterparty", "Bob")
 				.hasFieldOrPropertyWithValue("amount", BigDecimal.valueOf(1_000))
 				.hasFieldOrPropertyWithValue("currency", "USD")
 				.hasFieldOrPropertyWithValue("settlementDate", LocalDate.of(2030, 1, 1));

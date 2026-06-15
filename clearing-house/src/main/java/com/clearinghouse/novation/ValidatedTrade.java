@@ -5,8 +5,8 @@ import java.time.LocalDate;
 
 public record ValidatedTrade(
     String tradeId,
-    String counterpartyA,
-    String counterpartyB,
+    String party,
+    String counterparty,
     BigDecimal amount,
     String currency,
     LocalDate settlementDate

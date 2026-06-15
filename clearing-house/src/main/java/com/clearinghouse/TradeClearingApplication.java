@@ -5,7 +5,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
 public class TradeClearingApplication {
-    public static void main(String[] args) {
-        SpringApplication.run(TradeClearingApplication.class, args);
-    }
+
+	public static void main(String[] args) {
+		SpringApplication.run(TradeClearingApplication.class, args);
+	}
+
 }

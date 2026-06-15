@@ -11,7 +11,8 @@ record Currency(
     @JsonProperty("currency_symbol") String symbol,
     @JsonProperty("settlement_location") String settlementLocation,
     @JsonProperty("decimal_places") int decimalPlaces,
-    @JsonProperty("iso_numeric_code") int isoNumericCode,
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @JsonProperty("introduced_on") LocalDate introducedOn
+    @JsonProperty("introduced_on") LocalDate introducedOn,
+	@Deprecated(forRemoval = true)
+	@JsonProperty("iso_numeric_code") int isoNumericCode
 ) {}

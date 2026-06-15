@@ -16,8 +16,8 @@ class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
     public List<NovatedTrade> apply(ValidatedTrade trade) {
         log.info("{}[novate] Novating trade: {}{}", LogUtils.GREEN, trade.tradeId(), LogUtils.RESET);
         List<NovatedTrade> legs = List.of(
-            leg(trade.counterpartyA(), trade),
-            leg(trade.counterpartyB(), trade)
+            leg(trade.party(), trade),
+            leg(trade.counterparty(), trade)
         );
         log.info("{}[novate] Trade novated into {} legs: {}{}", LogUtils.GREEN, legs.size(), trade.tradeId(), LogUtils.RESET);
         return legs;

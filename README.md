@@ -152,9 +152,9 @@ rectangle "Incoming Trade\nKafka Topic" as input #FFE0B2
 rectangle "RiskValidator" as validator #BBDEFB
 note right of validator
   Validate:
-  - Amount > 0
-  - Valid dates
-  - Counterparties differ
+  - Rule 1: self-trade ban
+  - Rule 2: T+0..T+N window
+  - Rule 3: Fri-cutoff roll
   Output: ValidatedTrade
 end note
 
@@ -202,11 +202,24 @@ publisher --> output
 
 | Component | Role | Input | Output |
 |-----------|------|-------|--------|
-| **RiskValidator** | Validates trade against risk rules (amount, dates, counterparties) | `IncomingTrade` | `ValidatedTrade` or rejection |
+| **RiskValidator** | Validates trade against three risk rules (see below) | `IncomingTrade` | `ValidatedTrade` or rejection |
 | **TradeNovation** | Interposes clearing house; splits bilateral trade into two legs | `ValidatedTrade` | `NovatedTrade[]` (2 trades) |
 | **NovatedTradeRepository** | Persists trades to database | `NovatedTrade[]` | `NovatedTrade[]` (pass-through) |
 | **TradeConfirmationEnricher** | Loads static data (currencies, settlement info) from cache and enriches confirmations | `NovatedTrade[]` | `EnrichedConfirmation[]` |
 | **TradeConfirmationPublisher** | Publishes HTML email confirmations to Kafka notification channel | `EnrichedConfirmation[]` | Published event |
+
+## Validation Rules
+
+The `RiskValidator` filter applies three rules in order. The first two reject the trade; the third rewrites the settlement date.
+
+### Rule 1 — Self-trade ban
+A trade where `party` and `counterparty` are the same entity (case-insensitive) is a self-trade and is rejected. Self-trades have no economic substance and are typically blocked by the clearing house to prevent wash-trade abuse.
+
+### Rule 2 — T+0..T+N settlement window
+The settlement date must lie within `[today, today + maxLag]` **business days**, where `maxLag` is set per currency (USD/EUR/GBP/JPY = T+2 by default). Past dates and dates beyond the window are rejected. This guards against late-bookings being smuggled in and unrealistically far-future settlements.
+
+### Rule 3 — Friday-after-cutoff roll
+Trades booked after **17:00 on a Friday** (or any time over the weekend) cannot settle before the following Monday. If the requested settlement date is earlier, it is rolled forward to the next Monday. The trade is *not* rejected — only the settlement date changes.
 
 ## Architecture Diagrams
 
@@ -263,5 +276,5 @@ cd clearing-house && docker-compose up -d
 # Submit a trade
 curl -X POST http://localhost:8080/api/trades \
   -H "Content-Type: application/json" \
-  -d '{"tradeId":"T001","counterpartyA":"Alice","counterpartyB":"Bob","amount":1000000,"currency":"USD","settlementDate":"2026-06-20"}'
+  -d '{"tradeId":"T001","party":"Alice","counterparty":"Bob","amount":1000000,"currency":"USD","settlementDate":"2026-06-20"}'
 ```
