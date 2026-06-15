@@ -1,0 +1,36 @@
+@startuml
+database "Message Broker\nincoming-trades" as broker_in
+participant "RiskValidator" as validator
+participant "TradeNovation" as novation
+participant "TradePersister" as persister
+database "Database" as db
+participant "TradeConfirmationEnricher" as enricher
+participant "Currency API\n(cache)" as currency_api
+participant "TradeConfirmationPublisher" as publisher
+database "Message Broker\nemail-notifications" as broker_out
+
+broker_in ->> validator: IncomingTrade
+note over validator: Validate:\n- amount > 0\n- valid dates\n- counterparties differ
+
+validator ->> novation: ValidatedTrade
+note over novation: Split into 2 legs:\n- Alice → CH\n- CH → Bob
+
+novation ->> persister: NovatedTrade[]
+note over persister: Persist both legs
+
+persister ->> db: INSERT trades
+db ->> persister: trades saved
+
+persister ->> enricher: NovatedTrade[]
+note over enricher: Load static data\n(currencies, locations)
+
+enricher ->> currency_api: GET currency info
+currency_api ->> enricher: currency details
+
+enricher ->> publisher: EnrichedConfirmation[]
+note over publisher: Render HTML\nemail templates
+
+publisher ->> broker_out: Notification events
+note over broker_out: One per counterparty\n(Alice, Bob)
+
+@enduml

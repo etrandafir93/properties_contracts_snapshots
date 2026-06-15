@@ -1,0 +1,40 @@
+@startuml
+!theme plain
+skinparam backgroundColor #fafafa
+
+digraph {
+  rankdir=LR
+  node [shape=box, style=filled, fontname=Arial]
+
+  # Channels (pipes)
+  in_ch [label="IncomingTrade\nChannel", fillcolor="#FFE0B2", shape=box]
+  ch_1 [label="ValidatedTrade\nChannel", fillcolor="#E1F5FE", shape=box]
+  ch_2 [label="NovatedTrade[]\nChannel", fillcolor="#E1F5FE", shape=box]
+  ch_4 [label="EnrichedConfirmation[]\nChannel", fillcolor="#E1F5FE", shape=box]
+  out_ch [label="EmailNotification\nChannel", fillcolor="#FFE0B2", shape=box]
+
+  # Filters
+  f1 [label="RiskValidator\n(Filter)", fillcolor="#BBDEFB", shape=box]
+  f2 [label="TradeNovation\n(Filter)", fillcolor="#BBDEFB", shape=box]
+  f3 [label="TradePersister\n(Filter)", fillcolor="#BBDEFB", shape=box]
+  f4 [label="TradeConfirmationEnricher\n(Filter)", fillcolor="#BBDEFB", shape=box]
+  f5 [label="TradeConfirmationPublisher\n(Filter)", fillcolor="#BBDEFB", shape=box]
+
+  # Database
+  db [label="Database", fillcolor="#C8E6C9", shape=cylinder]
+
+  # Flow
+  in_ch -> f1 [label="pipe"]
+  f1 -> ch_1 [label="pipe"]
+  ch_1 -> f2 [label="pipe"]
+  f2 -> ch_2 [label="pipe"]
+  ch_2 -> f3 [label="pipe"]
+  f3 -> db [label="persist"]
+  f3 -> ch_2 [label="pass-through"]
+  ch_2 -> f4 [label="pipe"]
+  f4 -> ch_4 [label="pipe"]
+  ch_4 -> f5 [label="pipe"]
+  f5 -> out_ch [label="pipe"]
+}
+
+@enduml
