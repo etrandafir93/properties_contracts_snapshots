@@ -26,6 +26,9 @@ spring:
         email-out-0:
           destination: email-notifications
 
+currency-api:
+  url: http://localhost:8081
+
 logging:
   level:
     com.clearinghouse: DEBUG

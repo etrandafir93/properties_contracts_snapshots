@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.time.LocalDate;
 
-record CurrencyDto(
+record Currency(
     @JsonProperty("currency_code") String code,
     @JsonProperty("currency_name") String name,
     @JsonProperty("currency_symbol") String symbol,
@@ -14,9 +14,4 @@ record CurrencyDto(
     @JsonProperty("iso_numeric_code") int isoNumericCode,
     @JsonFormat(pattern = "yyyy-MM-dd")
     @JsonProperty("introduced_on") LocalDate introducedOn
-) {
-    static CurrencyDto from(CurrencyEntity e) {
-        return new CurrencyDto(e.code(), e.name(), e.symbol(), e.settlementLocation(),
-                e.decimalPlaces(), e.isoNumericCode(), e.introducedOn());
-    }
-}
+) {}

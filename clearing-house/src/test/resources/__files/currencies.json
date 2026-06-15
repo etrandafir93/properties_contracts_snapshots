@@ -1,0 +1,29 @@
+[
+  {
+    "currency_code": "USD",
+    "currency_name": "US Dollar",
+    "currency_symbol": "$",
+    "settlement_location": "New York",
+    "decimal_places": 2,
+    "iso_numeric_code": 840,
+    "introduced_on": "1792-04-02"
+  },
+  {
+    "currency_code": "EUR",
+    "currency_name": "Euro",
+    "currency_symbol": "€",
+    "settlement_location": "Frankfurt",
+    "decimal_places": 2,
+    "iso_numeric_code": 978,
+    "introduced_on": "1999-01-01"
+  },
+  {
+    "currency_code": "GBP",
+    "currency_name": "British Pound",
+    "currency_symbol": "£",
+    "settlement_location": "London",
+    "decimal_places": 2,
+    "iso_numeric_code": 826,
+    "introduced_on": "1694-07-27"
+  }
+]

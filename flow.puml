@@ -5,24 +5,26 @@
 queue "incoming-trades" as ch_in #FFE0B2
 
 ' validate Filter
-rectangle "validate" as f1 #BBDEFB
+rectangle "validate" as f1 #FFF9C4
 queue "validated-trades" as ch_1 #E1F5FE
 
 ' novate Filter
-rectangle "novate" as f2 #BBDEFB
+rectangle "novate" as f2 #DCEDC8
 queue "novated-trades" as ch_2 #E1F5FE
 
 ' persist Filter
 rectangle "persist" as f3 #BBDEFB
-database "DB" as db #C8E6C9
+database "DB" as db #BBDEFB
 queue "novated-trade-confirmations" as ch_3 #E1F5FE
 
 ' enrich Filter
-rectangle "enrich" as f4 #BBDEFB
+rectangle "enrich" as f4 #C5CAE9
+database "cache" as cache #C5CAE9
+rectangle "currency-api" as currency_api #FFE0B2
 queue "enriched-confirmations" as ch_4 #E1F5FE
 
 ' email Filter
-rectangle "email" as f5 #BBDEFB
+rectangle "email" as f5 #E1BEE7
 queue "email-notifications" as ch_out #FFE0B2
 
 ' Flow connections
@@ -31,9 +33,11 @@ f1 --> ch_1
 ch_1 --> f2
 f2 --> ch_2
 ch_2 --> f3
-f3 --> db
+f3 --> db : insert
 f3 --> ch_3
 ch_3 --> f4
+f4 --> cache : lookup
+cache ..> currency_api : GET /api/currencies\n(startup)
 f4 --> ch_4
 ch_4 --> f5
 f5 --> ch_out
