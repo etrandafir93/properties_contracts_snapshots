@@ -5,15 +5,19 @@ import static org.awaitility.Awaitility.await;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.IntStream;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
-
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.stream.binder.test.EnableTestBinder;
@@ -22,7 +26,6 @@ import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.context.annotation.Import;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 
@@ -75,61 +78,63 @@ class E2eTest {
 				.hasFieldOrPropertyWithValue("settlementDate", LocalDate.of(2030, 1, 1));
 	}
 
-	@Test
 	@Order(2)
-	void novate() {
+	@DisplayName("novate()")
+	@ParameterizedTest(name = "counterparty {0}")
+	@ValueSource(strings = {"Alice", "Bob"})
+	void novate(String counterparty) {
 		List<NovatedTrade> novatedTrades = receiveOne(output, "novated-trades", new TypeReference<>() {});
 
 		assertThat(novatedTrades)
-				.allSatisfy(leg -> assertThat(leg)
-						.hasFieldOrPropertyWithValue("originalTradeId", "trade-123")
-						.hasFieldOrPropertyWithValue("clearingHouseId", "CH-001")
-						.hasFieldOrPropertyWithValue("amount", BigDecimal.valueOf(1_000))
-						.hasFieldOrPropertyWithValue("currency", "USD"))
-				.extracting(NovatedTrade::counterparty)
-				.containsExactlyInAnyOrder("Alice", "Bob");
+				.anyMatch(leg ->
+						leg.counterparty().equals(counterparty) &&
+						leg.originalTradeId().equals("trade-123") &&
+						leg.clearingHouseId().equals("CH-001") &&
+						leg.amount().equals(BigDecimal.valueOf(1_000)) &&
+						leg.currency().equals("USD"));
 	}
 
-	@Test
 	@Order(3)
-	void persist() {
+	@DisplayName("persist()")
+	@ParameterizedTest(name = "counterparty {0}")
+	@ValueSource(strings = {"Alice", "Bob"})
+	void persist(String counterparty) {
 		await().untilAsserted(() ->
 			assertThat(tradeRepository.findAll())
 				.hasSize(2)
-				.allMatch(it -> it.getOriginalTradeId().equals("trade-123"))
-				.allMatch(it -> it.getAmount().equals(BigDecimal.valueOf(1_000)))
-				.allMatch(it -> it.getCurrency().equals("USD"))
-				.anyMatch(it -> it.getCounterparty().equals("Alice"))
-				.anyMatch(it -> it.getCounterparty().equals("Bob")));
+				.anyMatch(it ->
+						it.getCounterparty().equals(counterparty) &&
+						it.getOriginalTradeId().equals("trade-123") &&
+						it.getAmount().equals(BigDecimal.valueOf(1_000)) &&
+						it.getCurrency().equals("USD")));
 	}
 
-	@Test
 	@Order(4)
-	void enrich() {
+	@DisplayName("enrich()")
+	@ParameterizedTest(name = "counterparty {0}")
+	@ValueSource(strings = {"Alice", "Bob"})
+	void enrich(String counterparty) {
 		List<EnrichedConfirmation> confirmations = receiveMany(2, output,
 				"novated-trade-confirmations", EnrichedConfirmation.class);
 
 		assertThat(confirmations)
-				.allSatisfy(c -> assertThat(c)
-						.hasFieldOrPropertyWithValue("currencyName","US Dollar (USD)")
-						.hasFieldOrPropertyWithValue("settlementLocation", "New York")
-						.hasFieldOrPropertyWithValue("clearingHouseId", "CH-001"))
-				.extracting(EnrichedConfirmation::counterparty)
-				.containsExactlyInAnyOrder("Alice", "Bob");
+				.anyMatch(c ->
+						c.counterparty().equals(counterparty) &&
+						c.currencyName().equals("US Dollar (USD)") &&
+						c.settlementLocation().equals("New York") &&
+						c.clearingHouseId().equals("CH-001"));
 	}
 
-	@Test
 	@Order(5)
-	void email() {
+	@DisplayName("email()")
+	@ParameterizedTest(name = "counterparty {0}")
+	@ValueSource(strings = {"Alice", "Bob"})
+	void email(String counterparty) {
 		List<String> emails = receiveMany(2, output, "email-notifications", String::new);
 
 		assertThat(emails)
 			.anyMatch(it ->
-				it.contains("Counterparty: Alice") &&
-				it.contains("Amount: 1000 USD (US Dollar (USD))") &&
-				it.contains("Settlement Date: 2030-01-01 — New York"))
-			.anyMatch(it ->
-				it.contains("Counterparty: Bob") &&
+				it.contains("Counterparty: " + counterparty) &&
 				it.contains("Amount: 1000 USD (US Dollar (USD))") &&
 				it.contains("Settlement Date: 2030-01-01 — New York"));
 	}
@@ -150,10 +155,20 @@ class E2eTest {
 
 	private <T> List<T> receiveMany(int count, OutputDestination output, String channel,
 			java.util.function.Function<byte[], T> mapper) {
-		return IntStream.range(0, count).mapToObj(__ -> output.receive(2_000, channel))
+		if (receivedMessages.containsKey(channel)) {
+			return (List<T>) receivedMessages.get(channel);
+		}
+
+		var msgs = IntStream.range(0, count)
+				.mapToObj(__ -> output.receive(2_000, channel))
 				.filter(Objects::nonNull)
 				.map(Message::getPayload)
 				.map(mapper)
 				.toList();
+
+		receivedMessages.put(channel, msgs);
+		return msgs;
 	}
+
+	private static Map<String, List<?>> receivedMessages = new HashMap<>();
 }
