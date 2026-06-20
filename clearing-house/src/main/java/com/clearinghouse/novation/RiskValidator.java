@@ -76,13 +76,16 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
     // Rule 3: bookings after Friday 17:00 (or over the weekend) cannot settle before next Monday
     private LocalDate rollFridayAfterCutoff(LocalDate settlement) {
         ZonedDateTime now = ZonedDateTime.now(clock);
-        boolean afterCutoff =
-                (now.getDayOfWeek() == DayOfWeek.FRIDAY && !now.toLocalTime().isBefore(FRIDAY_CUTOFF))
-                        || now.getDayOfWeek() == DayOfWeek.SATURDAY
-                        || now.getDayOfWeek() == DayOfWeek.SUNDAY;
+
+		boolean afterCutoff = switch (now.getDayOfWeek()) {
+			case MONDAY, TUESDAY, WEDNESDAY, THURSDAY -> false;
+			case FRIDAY -> now.toLocalTime().isAfter(FRIDAY_CUTOFF);
+			case SATURDAY, SUNDAY -> true;
+		};
         if (!afterCutoff) {
             return settlement;
         }
+
         LocalDate nextMonday = now.toLocalDate();
         while (nextMonday.getDayOfWeek() != DayOfWeek.MONDAY) {
             nextMonday = nextMonday.plusDays(1);

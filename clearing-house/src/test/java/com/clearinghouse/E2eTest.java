@@ -24,6 +24,7 @@ import org.springframework.cloud.stream.binder.test.EnableTestBinder;
 import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
 import org.springframework.context.annotation.Import;
+import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.wiremock.spring.ConfigureWireMock;
@@ -33,7 +34,6 @@ import com.clearinghouse.email.EnrichedConfirmation;
 import com.clearinghouse.novation.IncomingTrade;
 import com.clearinghouse.novation.NovatedTrade;
 import com.clearinghouse.novation.ValidatedTrade;
-import com.clearinghouse.persistence.TradeRepository;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -55,7 +55,7 @@ class E2eTest {
 	private OutputDestination output;
 
 	@Autowired
-	private TradeRepository tradeRepository;
+	private JdbcClient jdbcClient;
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -99,14 +99,20 @@ class E2eTest {
 	@ParameterizedTest(name = "counterparty {0}")
 	@ValueSource(strings = {"Alice", "Bob"})
 	void persist(String counterparty) {
-		await().untilAsserted(() ->
-			assertThat(tradeRepository.findAll())
-				.hasSize(2)
-				.anyMatch(it ->
-						it.getCounterparty().equals(counterparty) &&
-						it.getOriginalTradeId().equals("trade-123") &&
-						it.getAmount().equals(BigDecimal.valueOf(1_000)) &&
-						it.getCurrency().equals("USD")));
+		await().untilAsserted(() -> {
+			List<Map<String, Object>> rows = jdbcClient
+					.sql("SELECT counterparty, original_trade_id, amount, currency FROM trades")
+					.query()
+					.listOfRows();
+
+			assertThat(rows)
+					.hasSize(2)
+					.anyMatch(row ->
+						row.get("counterparty").equals(counterparty)
+							&& row.get("original_trade_id").equals("trade-123")
+							&& row.get("amount").equals(BigDecimal.valueOf(1_000))
+							&& row.get("currency").equals("USD"));
+		});
 	}
 
 	@Order(4)

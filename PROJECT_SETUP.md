@@ -116,8 +116,8 @@ curl -X POST http://localhost:8080/api/trades \
   -H "Content-Type: application/json" \
   -d '{
     "tradeId": "TRADE-001",
-    "counterpartyA": "Bank A",
-    "counterpartyB": "Bank B",
+    "party": "Bank A",
+    "counterparty": "Bank B",
     "amount": 1000000.00,
     "currency": "USD",
     "settlementDate": "2026-06-20"
