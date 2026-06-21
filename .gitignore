@@ -42,3 +42,4 @@ replay_pid*
 # OS
 .DS_Store
 Thumbs.db
+/clearing-house/.jqwik-database

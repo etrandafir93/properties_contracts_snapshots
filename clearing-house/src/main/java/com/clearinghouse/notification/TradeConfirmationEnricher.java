@@ -1,7 +1,7 @@
 package com.clearinghouse.notification;
 
-import com.clearinghouse.application.Filter;
-import com.clearinghouse.application.LogUtils;
+import com.clearinghouse.Filter;
+
 import com.clearinghouse.notification.CurrencyApiClient.CurrencyDto;
 import com.clearinghouse.novation.NovatedTrade;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfir
 
     @Override
     public EnrichedConfirmation apply(NovatedTrade trade) {
-        log.info("{}[notification-enrich] Enriching trade confirmation: {}{}", LogUtils.INDIGO, trade.tradeId(), LogUtils.RESET);
+        log.info("[notification-enrich] Enriching trade confirmation: {}", trade.tradeId());
         CurrencyDto currency = currencyCache.get(trade.currency());
         EnrichedConfirmation enriched = new EnrichedConfirmation(
                 trade.tradeId(),
@@ -30,7 +30,7 @@ class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfir
                 displayName(currency),
                 currency.settlementLocation()
         );
-        log.info("{}[notification-enrich] Trade confirmation enriched: {}{}", LogUtils.INDIGO, enriched.tradeId(), LogUtils.RESET);
+        log.info("[notification-enrich] Trade confirmation enriched: {}", enriched.tradeId());
         return enriched;
     }
 

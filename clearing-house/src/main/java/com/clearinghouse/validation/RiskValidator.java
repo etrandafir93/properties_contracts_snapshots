@@ -1,7 +1,7 @@
 package com.clearinghouse.validation;
 
-import com.clearinghouse.application.Filter;
-import com.clearinghouse.application.LogUtils;
+import com.clearinghouse.Filter;
+
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
 
     @Override
     public ValidatedTrade apply(IncomingTrade trade) {
-        log.info("{}[validation] Validating incoming trade: {}{}", LogUtils.YELLOW, trade.tradeId(), LogUtils.RESET);
+        log.info("[validation] Validating incoming trade: {}", trade.tradeId());
 
         rejectSelfTrade(trade);
         LocalDate settlement = rollFridayAfterCutoff(trade.settlementDate());
@@ -49,7 +49,7 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
                 trade.currency(),
                 settlement
         );
-        log.info("{}[validation] Trade validated: {}{}", LogUtils.YELLOW, validated.tradeId(), LogUtils.RESET);
+        log.info("[validation] Trade validated: {}", validated.tradeId());
         return validated;
     }
 
@@ -87,7 +87,10 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
             return settlement;
         }
 
-        LocalDate nextMonday = now.toLocalDate();
+        LocalDate nextMonday = settlement.plusDays(1);
+		// hmmm? should we just use this instead ?!
+		// LocalDate nextMonday = settlement;
+
         while (nextMonday.getDayOfWeek() != DayOfWeek.MONDAY) {
             nextMonday = nextMonday.plusDays(1);
         }

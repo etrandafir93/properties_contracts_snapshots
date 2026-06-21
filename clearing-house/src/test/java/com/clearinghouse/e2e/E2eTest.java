@@ -38,21 +38,8 @@ import com.clearinghouse.validation.ValidatedTrade;
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
 
-@SpringBootTest
-@EnableTestBinder
 @TestMethodOrder(OrderAnnotation.class)
-@EnableWireMock(@ConfigureWireMock(
-		name = "currency-api",
-		baseUrlProperties = "currency-api.url"
-))
-@Import(FixedClockConfig.class)
-class E2eTest {
-
-	@Autowired
-	private InputDestination input;
-
-	@Autowired
-	private OutputDestination output;
+class E2eTest extends IntegrationTestBase {
 
 	@Autowired
 	private JdbcClient jdbcClient;

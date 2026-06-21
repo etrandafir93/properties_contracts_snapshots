@@ -1,7 +1,7 @@
 package com.clearinghouse.notification;
 
-import com.clearinghouse.application.Filter;
-import com.clearinghouse.application.LogUtils;
+import com.clearinghouse.Filter;
+
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Function;
@@ -12,8 +12,7 @@ class EmailNotifier implements Function<EnrichedConfirmation, String> {
 
     @Override
     public String apply(EnrichedConfirmation c) {
-        log.info("{}[notification-email] Generating confirmation email for trade: {} to counterparty: {}{}",
-            LogUtils.VIOLET, c.tradeId(), c.counterparty(), LogUtils.RESET);
+        log.info("[notification-email] Generating confirmation email for trade: {} to counterparty: {}", c.tradeId(), c.counterparty());
 
 		String html = """
             <html><body>
@@ -29,7 +28,7 @@ class EmailNotifier implements Function<EnrichedConfirmation, String> {
                 c.settlementDate(), c.settlementLocation()
             );
 
-        log.info("{}[notification-email] Confirmation email generated for trade: {}{}", LogUtils.VIOLET, c.tradeId(), LogUtils.RESET);
+        log.info("[notification-email] Confirmation email generated for trade: {}", c.tradeId());
         return html;
     }
 }

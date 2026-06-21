@@ -29,6 +29,8 @@ spring:
           destination: novated-trades
         novation-persist-in-0:
           destination: novated-trades
+          consumer:
+            max-attempts: 1
         notification-enrich-in-0:
           destination: persisted-trades
         notification-enrich-out-0:

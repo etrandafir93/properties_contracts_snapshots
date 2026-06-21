@@ -1,4 +1,4 @@
-package com.clearinghouse.application;
+package com.clearinghouse;
 
 import org.springframework.stereotype.Component;
 

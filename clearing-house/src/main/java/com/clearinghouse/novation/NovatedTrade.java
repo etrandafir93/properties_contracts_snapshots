@@ -10,5 +10,6 @@ public record NovatedTrade(
     BigDecimal amount,
     String currency,
     LocalDate settlementDate,
-    String originalTradeId
+    String originalTradeId,
+    String side
 ) {}

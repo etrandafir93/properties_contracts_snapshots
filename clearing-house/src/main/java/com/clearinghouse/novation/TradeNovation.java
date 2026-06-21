@@ -1,7 +1,7 @@
 package com.clearinghouse.novation;
 
-import com.clearinghouse.application.Filter;
-import com.clearinghouse.application.LogUtils;
+import com.clearinghouse.Filter;
+
 import com.clearinghouse.validation.ValidatedTrade;
 import lombok.extern.slf4j.Slf4j;
 
@@ -15,16 +15,16 @@ class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
 
     @Override
     public List<NovatedTrade> apply(ValidatedTrade trade) {
-        log.info("{}[novation-split] Novating trade: {}{}", LogUtils.GREEN, trade.tradeId(), LogUtils.RESET);
+        log.info("[novation-split] Novating trade: {}", trade.tradeId());
         List<NovatedTrade> legs = List.of(
-            leg(trade.party(), trade),
-            leg(trade.counterparty(), trade)
+            leg(trade.party(), trade, "BUY"),
+            leg(trade.counterparty(), trade, "SELL")
         );
-        log.info("{}[novation-split] Trade novated into {} legs: {}{}", LogUtils.GREEN, legs.size(), trade.tradeId(), LogUtils.RESET);
+        log.info("[novation-split] Trade novated into {} legs: {}", legs.size(), trade.tradeId());
         return legs;
     }
 
-    private NovatedTrade leg(String counterparty, ValidatedTrade trade) {
+    private NovatedTrade leg(String counterparty, ValidatedTrade trade, String side) {
         return new NovatedTrade(
             UUID.randomUUID().toString(),
             counterparty,
@@ -32,7 +32,8 @@ class TradeNovation implements Function<ValidatedTrade, List<NovatedTrade>> {
             trade.amount(),
             trade.currency(),
             trade.settlementDate(),
-            trade.tradeId()
+            trade.tradeId(),
+            side
         );
     }
 }
