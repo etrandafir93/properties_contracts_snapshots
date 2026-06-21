@@ -1,4 +1,4 @@
-package com.clearinghouse.persistence;
+package com.clearinghouse.novation;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

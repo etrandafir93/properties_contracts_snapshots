@@ -1,4 +1,4 @@
-package com.clearinghouse.persistence;
+package com.clearinghouse.novation;
 
 import com.clearinghouse.novation.NovatedTrade;
 

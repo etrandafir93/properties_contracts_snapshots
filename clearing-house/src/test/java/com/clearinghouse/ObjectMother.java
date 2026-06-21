@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.UUID;
 
-import com.clearinghouse.novation.IncomingTrade;
+import com.clearinghouse.validation.IncomingTrade;
 
 import lombok.experimental.UtilityClass;
 

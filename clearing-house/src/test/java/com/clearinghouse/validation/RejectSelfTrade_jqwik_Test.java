@@ -1,4 +1,4 @@
-package com.clearinghouse.novation;
+package com.clearinghouse.validation;
 
 import static com.clearinghouse.ObjectMother.aTrade;
 import static org.assertj.core.api.Assertions.assertThatCode;

@@ -1,4 +1,4 @@
-package com.clearinghouse.novation;
+package com.clearinghouse.validation;
 
 import com.clearinghouse.application.Filter;
 import com.clearinghouse.application.LogUtils;
@@ -14,7 +14,7 @@ import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.function.Function;
 
-@Filter("validate")
+@Filter("validation")
 @Slf4j
 @RequiredArgsConstructor
 class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
@@ -35,7 +35,7 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
 
     @Override
     public ValidatedTrade apply(IncomingTrade trade) {
-        log.info("{}[validate] Validating incoming trade: {}{}", LogUtils.YELLOW, trade.tradeId(), LogUtils.RESET);
+        log.info("{}[validation] Validating incoming trade: {}{}", LogUtils.YELLOW, trade.tradeId(), LogUtils.RESET);
 
         rejectSelfTrade(trade);
         LocalDate settlement = rollFridayAfterCutoff(trade.settlementDate());
@@ -49,7 +49,7 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
                 trade.currency(),
                 settlement
         );
-        log.info("{}[validate] Trade validated: {}{}", LogUtils.YELLOW, validated.tradeId(), LogUtils.RESET);
+        log.info("{}[validation] Trade validated: {}{}", LogUtils.YELLOW, validated.tradeId(), LogUtils.RESET);
         return validated;
     }
 

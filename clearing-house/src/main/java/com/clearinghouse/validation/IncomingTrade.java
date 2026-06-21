@@ -1,9 +1,12 @@
-package com.clearinghouse.novation;
+package com.clearinghouse.validation;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-public record ValidatedTrade(
+import lombok.With;
+
+@With
+public record IncomingTrade(
     String tradeId,
     String party,
     String counterparty,

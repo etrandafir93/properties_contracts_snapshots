@@ -16,26 +16,26 @@ spring:
 
   cloud:
     function:
-      definition: validate;novate;persist;enrich;email
+      definition: validation;novation-split;novation-persist;notification-enrich;notification-email
     stream:
       bindings:
-        validate-in-0:
+        validation-in-0:
           destination: incoming-trades
-        validate-out-0:
+        validation-out-0:
           destination: validated-trades
-        novate-in-0:
+        novation-split-in-0:
           destination: validated-trades
-        novate-out-0:
+        novation-split-out-0:
           destination: novated-trades
-        persist-in-0:
+        novation-persist-in-0:
           destination: novated-trades
-        enrich-in-0:
+        notification-enrich-in-0:
           destination: persisted-trades
-        enrich-out-0:
+        notification-enrich-out-0:
           destination: novated-trade-confirmations
-        email-in-0:
+        notification-email-in-0:
           destination: novated-trade-confirmations
-        email-out-0:
+        notification-email-out-0:
           destination: email-notifications
 
 currency-api:

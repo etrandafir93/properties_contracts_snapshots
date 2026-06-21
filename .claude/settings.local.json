@@ -18,7 +18,8 @@
       "WebFetch(domain:mvnrepository.com)",
       "Bash(javap /tmp/jqwik-inspect/Dates.class)",
       "Bash(javap /tmp/jqwik-inspect/DateTimes.class)",
-      "Bash(javap /tmp/jqwik-inspect/Times.class)"
+      "Bash(javap /tmp/jqwik-inspect/Times.class)",
+      "Bash(../mvnw -q -DskipTests test-compile)"
     ]
   }
 }

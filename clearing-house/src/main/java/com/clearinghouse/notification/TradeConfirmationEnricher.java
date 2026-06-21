@@ -1,15 +1,15 @@
-package com.clearinghouse.email;
+package com.clearinghouse.notification;
 
 import com.clearinghouse.application.Filter;
 import com.clearinghouse.application.LogUtils;
-import com.clearinghouse.email.CurrencyApiClient.CurrencyDto;
+import com.clearinghouse.notification.CurrencyApiClient.CurrencyDto;
 import com.clearinghouse.novation.NovatedTrade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.function.Function;
 
-@Filter("enrich")
+@Filter("notification-enrich")
 @Slf4j
 @RequiredArgsConstructor
 class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfirmation> {
@@ -18,7 +18,7 @@ class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfir
 
     @Override
     public EnrichedConfirmation apply(NovatedTrade trade) {
-        log.info("{}[enrich] Enriching trade confirmation: {}{}", LogUtils.INDIGO, trade.tradeId(), LogUtils.RESET);
+        log.info("{}[notification-enrich] Enriching trade confirmation: {}{}", LogUtils.INDIGO, trade.tradeId(), LogUtils.RESET);
         CurrencyDto currency = currencyCache.get(trade.currency());
         EnrichedConfirmation enriched = new EnrichedConfirmation(
                 trade.tradeId(),
@@ -30,7 +30,7 @@ class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfir
                 displayName(currency),
                 currency.settlementLocation()
         );
-        log.info("{}[enrich] Trade confirmation enriched: {}{}", LogUtils.INDIGO, enriched.tradeId(), LogUtils.RESET);
+        log.info("{}[notification-enrich] Trade confirmation enriched: {}{}", LogUtils.INDIGO, enriched.tradeId(), LogUtils.RESET);
         return enriched;
     }
 

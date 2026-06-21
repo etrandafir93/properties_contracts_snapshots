@@ -1,4 +1,4 @@
-package com.clearinghouse.novation;
+package com.clearinghouse.validation;
 
 import static java.time.DayOfWeek.MONDAY;
 import static java.time.DayOfWeek.SATURDAY;

@@ -1,4 +1,4 @@
-package com.clearinghouse.email;
+package com.clearinghouse.notification;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;

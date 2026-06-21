@@ -1,4 +1,4 @@
-package com.clearinghouse.novation;
+package com.clearinghouse.validation;
 
 import static com.clearinghouse.ObjectMother.aTrade;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -8,13 +8,12 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
+import java.util.Random;
 
-import net.jqwik.api.Example;
-import net.jqwik.api.ForAll;
-import net.jqwik.api.Property;
-import net.jqwik.api.constraints.IntRange;
+import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Test;
 
-class RejectOutsideSettlementWindow_jqwik_Test {
+class RejectOutsideSettlementWindow_junit_Test {
 
     // Tuesday 2030-01-01 10:00 UTC — keeps the Friday cutoff dormant.
     // With USD (T+2 business days) the latest accepted settlement is 2030-01-03.
@@ -23,12 +22,14 @@ class RejectOutsideSettlementWindow_jqwik_Test {
     private static final LocalDate TODAY = LocalDate.of(2030, 1, 1);
     private static final LocalDate LATEST_VALID = LocalDate.of(2030, 1, 3);
 
+    private static final Random RANDOM = new Random(42);
+
     private final RiskValidator validator = new RiskValidator(CLOCK);
 
-    @Property
-    void shouldRejectWhenSettlementIsPastTheWindow(
-            @ForAll @IntRange(min = 1, max = 365) int daysPastWindow
-    ) {
+    @RepeatedTest(200)
+    void shouldRejectWhenSettlementIsPastTheWindow() {
+        int daysPastWindow = RANDOM.nextInt(1, 365);
+
         LocalDate settlementDate = LATEST_VALID.plusDays(daysPastWindow);
 
         IncomingTrade trade = aTrade()
@@ -39,10 +40,10 @@ class RejectOutsideSettlementWindow_jqwik_Test {
                 .hasMessageContaining("outside the allowed window");
     }
 
-    @Property
-    void shouldAcceptWhenSettlementIsWithinTheWindow(
-            @ForAll @IntRange(max = 2) int daysFromToday
-    ) {
+    @RepeatedTest(200)
+    void shouldAcceptWhenSettlementIsWithinTheWindow() {
+        int daysFromToday = RANDOM.nextInt(0, 3);
+
         LocalDate settlementDate = TODAY.plusDays(daysFromToday);
 
         IncomingTrade trade = aTrade()
@@ -52,7 +53,7 @@ class RejectOutsideSettlementWindow_jqwik_Test {
                 .doesNotThrowAnyException();
     }
 
-    @Example
+    @Test
     void latestValidSettlementIsAccepted() {
         IncomingTrade trade = aTrade()
 				.withSettlementDate(LATEST_VALID);
@@ -61,7 +62,7 @@ class RejectOutsideSettlementWindow_jqwik_Test {
                 .doesNotThrowAnyException();
     }
 
-    @Example
+    @Test
     void dayAfterLatestValidIsRejected() {
         IncomingTrade trade = aTrade()
 				.withSettlementDate(LATEST_VALID.plusDays(1));

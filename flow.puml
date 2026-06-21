@@ -4,27 +4,27 @@
 ' Input Channel (message queue)
 queue "incoming-trades" as ch_in #FFE0B2
 
-' validate Filter
-rectangle "validate" as f1 #FFF9C4
+' validation Filter
+rectangle "validation" as f1 #FFF9C4
 queue "validated-trades" as ch_1 #E1F5FE
 
-' novate Filter
-rectangle "novate" as f2 #DCEDC8
+' novation-split Filter
+rectangle "novation-split" as f2 #DCEDC8
 queue "novated-trades" as ch_2 #E1F5FE
 
-' persist Filter
-rectangle "persist" as f3 #BBDEFB
+' novation-persist Filter
+rectangle "novation-persist" as f3 #BBDEFB
 database "DB" as db #BBDEFB
 queue "novated-trade-confirmations" as ch_3 #E1F5FE
 
-' enrich Filter
-rectangle "enrich" as f4 #C5CAE9
+' notification-enrich Filter
+rectangle "notification-enrich" as f4 #C5CAE9
 database "cache" as cache #C5CAE9
 rectangle "currency-api" as currency_api #FFE0B2
 queue "enriched-confirmations" as ch_4 #E1F5FE
 
-' email Filter
-rectangle "email" as f5 #E1BEE7
+' notification-email Filter
+rectangle "notification-email" as f5 #E1BEE7
 queue "email-notifications" as ch_out #FFE0B2
 
 ' Flow connections

@@ -1,4 +1,4 @@
-package com.clearinghouse.persistence;
+package com.clearinghouse.novation;
 
 import static java.util.concurrent.CompletableFuture.supplyAsync;
 
@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Filter("persist")
+@Filter("novation-persist")
 class TradePersister implements Consumer<List<NovatedTrade>> {
 
     final TradeRepository tradeRepository;
@@ -24,13 +24,13 @@ class TradePersister implements Consumer<List<NovatedTrade>> {
 
     @Override
     public void accept(List<NovatedTrade> trades) {
-        log.info("{}[persist] Persisting {} trades{}", LogUtils.BLUE, trades.size(), LogUtils.RESET);
+        log.info("{}[novation-persist] Persisting {} trades{}", LogUtils.BLUE, trades.size(), LogUtils.RESET);
         trades.stream()
 				.map(TradeEntity::from)
 				.forEach(tradeRepository::save);
 
 		trades.stream()
-				.peek(trade -> log.info("{}[persist] Trade persisted: {}{}", LogUtils.BLUE, trade.tradeId(), LogUtils.RESET))
+				.peek(trade -> log.info("{}[novation-persist] Trade persisted: {}{}", LogUtils.BLUE, trade.tradeId(), LogUtils.RESET))
 				.forEach(trade -> supplyAsync(() ->
 					streamBridge.send("persisted-trades", trade)));
     }

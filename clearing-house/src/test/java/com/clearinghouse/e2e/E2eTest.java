@@ -30,10 +30,10 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.wiremock.spring.ConfigureWireMock;
 import org.wiremock.spring.EnableWireMock;
 
-import com.clearinghouse.email.EnrichedConfirmation;
-import com.clearinghouse.novation.IncomingTrade;
+import com.clearinghouse.notification.EnrichedConfirmation;
+import com.clearinghouse.validation.IncomingTrade;
 import com.clearinghouse.novation.NovatedTrade;
-import com.clearinghouse.novation.ValidatedTrade;
+import com.clearinghouse.validation.ValidatedTrade;
 
 import tools.jackson.core.type.TypeReference;
 import tools.jackson.databind.ObjectMapper;
@@ -61,6 +61,7 @@ class E2eTest {
 
 	@Test
 	@Order(1)
+	@DisplayName("validation")
 	void validate() {
 		var trade = new IncomingTrade("trade-123", "Alice", "Bob",
 				BigDecimal.valueOf(1_000), "USD", LocalDate.of(2030, 1, 1));
@@ -79,7 +80,7 @@ class E2eTest {
 	}
 
 	@Order(2)
-	@DisplayName("novate()")
+	@DisplayName("novation - split")
 	@ParameterizedTest(name = "counterparty {0}")
 	@ValueSource(strings = {"Alice", "Bob"})
 	void novate(String counterparty) {
@@ -95,7 +96,7 @@ class E2eTest {
 	}
 
 	@Order(3)
-	@DisplayName("persist()")
+	@DisplayName("novation - persist")
 	@ParameterizedTest(name = "counterparty {0}")
 	@ValueSource(strings = {"Alice", "Bob"})
 	void persist(String counterparty) {
@@ -116,7 +117,7 @@ class E2eTest {
 	}
 
 	@Order(4)
-	@DisplayName("enrich()")
+	@DisplayName("notification - enrich")
 	@ParameterizedTest(name = "counterparty {0}")
 	@ValueSource(strings = {"Alice", "Bob"})
 	void enrich(String counterparty) {
@@ -132,7 +133,7 @@ class E2eTest {
 	}
 
 	@Order(5)
-	@DisplayName("email()")
+	@DisplayName("notification - email")
 	@ParameterizedTest(name = "counterparty {0}")
 	@ValueSource(strings = {"Alice", "Bob"})
 	void email(String counterparty) {
