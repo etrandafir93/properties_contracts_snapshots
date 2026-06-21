@@ -1,4 +1,4 @@
-package com.clearinghouse;
+package com.clearinghouse.e2e;
 
 import java.time.Clock;
 import java.time.Instant;

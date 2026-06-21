@@ -35,6 +35,6 @@ class TradeConfirmationEnricher implements Function<NovatedTrade, EnrichedConfir
     }
 
     private String displayName(CurrencyDto currency) {
-        return currency.name() + " (" + currency.code() + ")";
+        return "%s (%s)".formatted(currency.name(), currency.code());
     }
 }

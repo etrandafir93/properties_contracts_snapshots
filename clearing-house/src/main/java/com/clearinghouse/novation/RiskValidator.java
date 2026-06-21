@@ -55,9 +55,9 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
 
     // Rule 1: a trade where both legs are the same counterparty is a self-trade and is rejected
     private void rejectSelfTrade(IncomingTrade trade) {
-        if (trade.party().equalsIgnoreCase(trade.counterparty())) {
+        if (trade.party().equals(trade.counterparty())) {
             throw new IllegalArgumentException(
-                    "Self-trade rejected for trade " + trade.tradeId() + ": " + trade.party());
+                    "Self-trade rejected for trade %s: %s".formatted(trade.tradeId(), trade.party()));
         }
     }
 
@@ -66,23 +66,24 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
         LocalDate today = LocalDate.now(clock);
         int maxLag = MAX_SETTLEMENT_LAG_DAYS.getOrDefault(currency, DEFAULT_MAX_SETTLEMENT_LAG_DAYS);
         LocalDate latest = addBusinessDays(today, maxLag);
-        if (settlement.isBefore(today) || settlement.isAfter(latest)) {
+
+		if (settlement.isBefore(today) || settlement.isAfter(latest)) {
             throw new IllegalArgumentException(
-                    "Settlement date " + settlement + " is outside the allowed window ["
-                            + today + ", " + latest + "] for " + currency);
+                    "Settlement date %s is outside the allowed window [%s, %s] for %s"
+                            .formatted(settlement, today, latest, currency));
         }
     }
 
     // Rule 3: bookings after Friday 17:00 (or over the weekend) cannot settle before next Monday
-    private LocalDate rollFridayAfterCutoff(LocalDate settlement) {
+    LocalDate rollFridayAfterCutoff(LocalDate settlement) {
         ZonedDateTime now = ZonedDateTime.now(clock);
 
-		boolean afterCutoff = switch (now.getDayOfWeek()) {
-			case MONDAY, TUESDAY, WEDNESDAY, THURSDAY -> false;
-			case FRIDAY -> now.toLocalTime().isAfter(FRIDAY_CUTOFF);
-			case SATURDAY, SUNDAY -> true;
+		boolean beforeCutoff = switch (now.getDayOfWeek()) {
+			case MONDAY, TUESDAY, WEDNESDAY, THURSDAY -> true;
+			case FRIDAY -> now.toLocalTime().isBefore(FRIDAY_CUTOFF);
+			case SATURDAY, SUNDAY -> false;
 		};
-        if (!afterCutoff) {
+        if (beforeCutoff) {
             return settlement;
         }
 
@@ -90,7 +91,7 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
         while (nextMonday.getDayOfWeek() != DayOfWeek.MONDAY) {
             nextMonday = nextMonday.plusDays(1);
         }
-        return settlement.isBefore(nextMonday) ? nextMonday : settlement;
+        return nextMonday;
     }
 
     private LocalDate addBusinessDays(LocalDate start, int businessDays) {
@@ -98,9 +99,10 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
         int added = 0;
         while (added < businessDays) {
             date = date.plusDays(1);
-            if (date.getDayOfWeek() != DayOfWeek.SATURDAY && date.getDayOfWeek() != DayOfWeek.SUNDAY) {
-                added++;
-            }
+			added += switch (date.getDayOfWeek()) {
+				case MONDAY, TUESDAY, WEDNESDAY, THURSDAY, FRIDAY -> 1;
+				case SATURDAY, SUNDAY -> 0;
+			};
         }
         return date;
     }

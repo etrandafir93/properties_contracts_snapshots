@@ -15,7 +15,10 @@
       "WebSearch",
       "WebFetch(domain:github.com)",
       "WebFetch(domain:wiremock.org)",
-      "WebFetch(domain:mvnrepository.com)"
+      "WebFetch(domain:mvnrepository.com)",
+      "Bash(javap /tmp/jqwik-inspect/Dates.class)",
+      "Bash(javap /tmp/jqwik-inspect/DateTimes.class)",
+      "Bash(javap /tmp/jqwik-inspect/Times.class)"
     ]
   }
 }

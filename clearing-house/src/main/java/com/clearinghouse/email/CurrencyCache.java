@@ -21,8 +21,12 @@ class CurrencyCache {
     @PostConstruct
     void load() {
         log.info("Loading currency cache from currency-api...");
-        cache = currencyApiClient.fetchAll().stream()
-                .collect(toMap(CurrencyApiClient.CurrencyDto::code, identity()));
+        cache = currencyApiClient.fetchAll()
+				.stream()
+                .collect(toMap(
+						CurrencyApiClient.CurrencyDto::code,
+						identity()
+				));
         log.info("Currency cache loaded with {} currencies", cache.size());
     }
 
