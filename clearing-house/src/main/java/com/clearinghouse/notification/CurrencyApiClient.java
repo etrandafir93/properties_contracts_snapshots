@@ -31,8 +31,8 @@ class CurrencyApiClient {
             @JsonProperty("currency_name") String name,
             @JsonProperty("currency_symbol") String symbol,
             @JsonProperty("settlement_location") String settlementLocation,
-            @JsonProperty("decimal_places") int decimalPlaces,
-            @JsonProperty("iso_numeric_code") int isoNumericCode,
+            @JsonProperty("decimal_places") Integer decimalPlaces,
+            @JsonProperty("iso_numeric_code") Integer isoNumericCode,
             @JsonFormat(pattern = "yyyy-MM-dd")
             @JsonProperty("introduced_on") LocalDate introducedOn) {
     }
