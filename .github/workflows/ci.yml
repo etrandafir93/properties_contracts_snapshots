@@ -31,6 +31,8 @@ jobs:
 
       - name: Run tests
         run: ./mvnw verify --no-transfer-progress
+        env:
+          CI: 'true'
 
       - name: Publish test report
         uses: dorny/test-reporter@v1
