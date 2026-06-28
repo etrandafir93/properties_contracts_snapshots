@@ -9,6 +9,8 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.cloud.contract.stubrunner.junit.StubRunnerExtension;
 import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties;
 
+import com.clearinghouse.novation.NovatedTrade;
+
 class TradeConfirmationEnricher_ContractTest {
 
     @RegisterExtension
@@ -28,7 +30,9 @@ class TradeConfirmationEnricher_ContractTest {
 
     @Test
     void shouldEnrichTrade_usd() {
-        var result = enricher.apply(aNovatedTrade().withCurrency("USD"));
+		NovatedTrade trade = aNovatedTrade().withCurrency("USD");
+
+		EnrichedConfirmation result = enricher.apply(trade);
 
         assertThat(result)
                 .hasFieldOrPropertyWithValue("currencyName", "US Dollar (USD)")
@@ -37,7 +41,9 @@ class TradeConfirmationEnricher_ContractTest {
 
     @Test
     void shouldEnrichTrade_eur() {
-        var result = enricher.apply(aNovatedTrade().withCurrency("EUR"));
+		NovatedTrade trade = aNovatedTrade().withCurrency("EUR");
+
+		EnrichedConfirmation result = enricher.apply(trade);
 
         assertThat(result)
                 .hasFieldOrPropertyWithValue("currencyName", "Euro (978)")
