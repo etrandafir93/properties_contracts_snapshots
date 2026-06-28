@@ -19,20 +19,14 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.cloud.stream.binder.test.EnableTestBinder;
-import org.springframework.cloud.stream.binder.test.InputDestination;
 import org.springframework.cloud.stream.binder.test.OutputDestination;
-import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
-import org.wiremock.spring.ConfigureWireMock;
-import org.wiremock.spring.EnableWireMock;
 
 import com.clearinghouse.notification.EnrichedConfirmation;
-import com.clearinghouse.validation.IncomingTrade;
 import com.clearinghouse.novation.NovatedTrade;
+import com.clearinghouse.validation.IncomingTrade;
 import com.clearinghouse.validation.ValidatedTrade;
 
 import tools.jackson.core.type.TypeReference;
