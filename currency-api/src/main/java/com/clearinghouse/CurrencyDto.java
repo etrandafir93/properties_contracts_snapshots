@@ -2,7 +2,7 @@ package com.clearinghouse;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-record Currency(
+record CurrencyDto(
     @JsonProperty("currency_code") String code,
     @JsonProperty("currency_name") String name,
     @JsonProperty("currency_symbol") String symbol,

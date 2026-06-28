@@ -1,9 +1,10 @@
 package com.clearinghouse;
 
-import java.io.IOException;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.InputStream;
 import java.util.Comparator;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -15,27 +16,26 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.core.type.TypeReference;
+import tools.jackson.databind.json.JsonMapper;
 
 @RestController
 @RequestMapping("/api/currencies")
 class CurrencyController {
 
-	private static final ObjectMapper MAPPER = new ObjectMapper();
+	private final JsonMapper jsonMapper;
 
-	private Map<String, Currency> currencies;
+	private Map<String, CurrencyDto> currencies;
 
 	@GetMapping
-	List<Currency> getAllCurrencies() {
+	List<CurrencyDto> getAllCurrencies() {
 		return currencies.values().stream()
-				.sorted(Comparator.comparing(Currency::code))
-				.toList();
+				.sorted(Comparator.comparing(CurrencyDto::code)).toList();
 	}
 
 	@GetMapping("/{code}")
-	Currency getCurrency(@PathVariable String code) {
-		Currency currency = currencies.get(code.toUpperCase());
+	CurrencyDto getCurrency(@PathVariable String code) {
+		CurrencyDto currency = currencies.get(code.toUpperCase());
 		if (currency == null) {
 			throw new CurrencyNotFoundException("Currency not found: " + code);
 		}
@@ -61,19 +61,18 @@ class CurrencyController {
 		this.currencies = loadCurrencies();
 	}
 
-	private Map<String, Currency> loadCurrencies() {
-		Map<String, Currency> result = new HashMap<>();
-		try (InputStream inputStream = getClass().getClassLoader()
-				.getResourceAsStream("currencies.json")) {
-			if (inputStream != null) {
-				List<Currency> currencies = MAPPER.readValue(inputStream,
-						new TypeReference<>() {});
-				currencies.forEach(c -> result.put(c.code(), c));
-			}
-		}
-		catch (IOException e) {
-			throw new RuntimeException("Failed to load currencies", e);
-		}
-		return result;
+	private Map<String, CurrencyDto> loadCurrencies() {
+		InputStream inputStream = getClass().getClassLoader()
+				.getResourceAsStream("currencies.json");
+
+		List<CurrencyDto> currencies = jsonMapper.readValue(
+				inputStream, new TypeReference<>() {});
+
+		return currencies.stream()
+				.collect(toMap(CurrencyDto::code, identity()));
+	}
+
+	CurrencyController(JsonMapper jsonMapper) {
+		this.jsonMapper = jsonMapper;
 	}
 }
