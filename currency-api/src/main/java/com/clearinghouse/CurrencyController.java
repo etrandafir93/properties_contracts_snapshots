@@ -2,6 +2,7 @@ package com.clearinghouse;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,11 +22,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RequestMapping("/api/currencies")
 class CurrencyController {
 
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+
 	private Map<String, Currency> currencies;
 
 	@GetMapping
 	List<Currency> getAllCurrencies() {
-		return currencies.values().stream().toList();
+		return currencies.values().stream()
+				.sorted(Comparator.comparing(Currency::code))
+				.toList();
 	}
 
 	@GetMapping("/{code}")
@@ -58,21 +63,17 @@ class CurrencyController {
 
 	private Map<String, Currency> loadCurrencies() {
 		Map<String, Currency> result = new HashMap<>();
-		ObjectMapper mapper = new ObjectMapper();
-
 		try (InputStream inputStream = getClass().getClassLoader()
 				.getResourceAsStream("currencies.json")) {
 			if (inputStream != null) {
-				List<Currency> currencies = mapper.readValue(inputStream,
-						new TypeReference<>() {
-						});
+				List<Currency> currencies = MAPPER.readValue(inputStream,
+						new TypeReference<>() {});
 				currencies.forEach(c -> result.put(c.code(), c));
 			}
 		}
 		catch (IOException e) {
 			throw new RuntimeException("Failed to load currencies", e);
 		}
-
 		return result;
 	}
 }

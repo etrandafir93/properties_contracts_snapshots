@@ -37,8 +37,13 @@ class RiskValidator implements Function<IncomingTrade, ValidatedTrade> {
     public ValidatedTrade apply(IncomingTrade trade) {
         log.info("[validation] Validating incoming trade: {}", trade.tradeId());
 
+		// 1. Reject self-trades
         rejectSelfTrade(trade);
+
+		// 2. Adjust settlement date for bookings after Friday cutoff
         LocalDate settlement = rollFridayAfterCutoff(trade.settlementDate());
+
+		// 3. Reject if settlement date is outside the allowed window
         rejectIfOutsideSettlementWindow(trade.currency(), settlement);
 
         ValidatedTrade validated = new ValidatedTrade(
