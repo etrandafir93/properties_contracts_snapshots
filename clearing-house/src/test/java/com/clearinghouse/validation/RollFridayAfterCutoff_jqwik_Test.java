@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.assertj.core.api.SoftAssertions;
+import org.junit.jupiter.api.Tag;
 
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
@@ -20,6 +21,7 @@ import net.jqwik.time.api.constraints.DateRange;
 import net.jqwik.time.api.constraints.DateTimeRange;
 import net.jqwik.time.api.constraints.DayOfWeekRange;
 
+@Tag("property")
 class RollFridayAfterCutoff_jqwik_Test {
 
     @Property

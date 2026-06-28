@@ -4,6 +4,7 @@ import static com.clearinghouse.ObjectMother.aNovatedTrade;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.cloud.contract.stubrunner.junit.StubRunnerExtension;
@@ -11,6 +12,7 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 
 import com.clearinghouse.novation.NovatedTrade;
 
+@Tag("contract")
 class TradeConfirmationEnricher_ContractTest {
 
     @RegisterExtension

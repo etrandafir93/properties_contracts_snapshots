@@ -12,7 +12,9 @@ import java.time.ZoneOffset;
 import java.util.Random;
 
 import org.junit.jupiter.api.RepeatedTest;
+import org.junit.jupiter.api.Tag;
 
+@Tag("property")
 class RejectSelfTrade_junit_Test {
 
     // Tuesday 2030-01-01 10:00 UTC — keeps the Friday cutoff dormant

@@ -9,11 +9,14 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 
+import org.junit.jupiter.api.Tag;
+
 import net.jqwik.api.Example;
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.IntRange;
 
+@Tag("property")
 class RejectOutsideSettlementWindow_jqwik_Test {
 
     // Tuesday 2030-01-01 10:00 UTC — keeps the Friday cutoff dormant.

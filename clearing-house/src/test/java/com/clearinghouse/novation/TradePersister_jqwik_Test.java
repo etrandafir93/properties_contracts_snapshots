@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import org.junit.jupiter.api.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.support.MessageBuilder;
 
@@ -30,6 +31,7 @@ import net.jqwik.spring.JqwikSpringSupport;
 import net.jqwik.time.api.Dates;
 import net.jqwik.time.api.arbitraries.LocalDateArbitrary;
 
+@Tag("property")
 @JqwikSpringSupport
 class TradePersister_jqwik_Test extends IntegrationTestBase {
 

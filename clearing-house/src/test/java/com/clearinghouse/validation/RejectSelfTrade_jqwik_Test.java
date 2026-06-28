@@ -9,10 +9,13 @@ import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
 
+import org.junit.jupiter.api.Tag;
+
 import net.jqwik.api.ForAll;
 import net.jqwik.api.Property;
 import net.jqwik.api.constraints.AlphaChars;
 
+@Tag("property")
 class RejectSelfTrade_jqwik_Test {
 
     private static final Clock CLOCK =
