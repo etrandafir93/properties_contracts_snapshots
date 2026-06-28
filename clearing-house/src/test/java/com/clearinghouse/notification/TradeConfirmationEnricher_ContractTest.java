@@ -3,8 +3,8 @@ package com.clearinghouse.notification;
 import static com.clearinghouse.ObjectMother.aNovatedTrade;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisabledIfEnvironmentVariable;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -14,7 +14,6 @@ import org.springframework.cloud.contract.stubrunner.spring.StubRunnerProperties
 import com.clearinghouse.novation.NovatedTrade;
 
 @Tag("contract")
-@DisabledIfEnvironmentVariable(named = "CI", matches = "true")
 class TradeConfirmationEnricher_ContractTest {
 
     @RegisterExtension
@@ -26,6 +25,7 @@ class TradeConfirmationEnricher_ContractTest {
 
     @BeforeEach
     void setUp() {
+        Assumptions.assumeTrue(!"true".equals(System.getenv("CI")), "Contract tests are skipped in CI");
         int port = stubRunner.findStubUrl("com.clearinghouse", "currency-api").getPort();
         var client = new CurrencyApiClient("http://localhost:" + port);
         enricher = new TradeConfirmationEnricher(client);
