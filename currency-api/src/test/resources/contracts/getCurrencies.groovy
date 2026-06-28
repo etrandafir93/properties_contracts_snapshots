@@ -58,7 +58,7 @@ Contract.make {
                 currency_symbol   : "£",
                 settlement_location: "London",
                 decimal_places    : 2,
-//                iso_numeric_code  : 826,
+                iso_numeric_code  : 826,
                 introduced_on     : "1971-02-15"
             ],
             [
@@ -67,7 +67,7 @@ Contract.make {
                 currency_symbol   : "¥",
                 settlement_location: "Tokyo",
                 decimal_places    : 0,
-//                iso_numeric_code  : 392,
+                iso_numeric_code  : 392,
                 introduced_on     : "1871-06-27"
             ],
             [
@@ -76,7 +76,7 @@ Contract.make {
                 currency_symbol   : "\$",
                 settlement_location: "New York",
                 decimal_places    : 2,
-//                iso_numeric_code  : 840,
+                iso_numeric_code  : 840,
                 introduced_on     : "1792-04-02"
             ]
         ])

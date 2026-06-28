@@ -14,8 +14,8 @@
     <description>Multi-module project demonstrating property-based, contract, and snapshot testing with a clearing house system</description>
 
     <modules>
-        <module>clearing-house</module>
         <module>currency-api</module>
+        <module>clearing-house</module>
     </modules>
 
     <parent>
